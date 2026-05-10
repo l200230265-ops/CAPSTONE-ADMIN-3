@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { useReports } from '../context/ReportsContext.jsx'
 import { REPORT_CATEGORIES } from '../data/categories.js'
 import * as XLSX from 'xlsx'
-import logo from '../assets/logo.png'
 import '../App.css'
 
 function IconSearch() {
@@ -22,7 +21,6 @@ function IconSearch() {
         stroke="currentColor"
         strokeWidth="2"
       />
-
       <path
         d="M20 20l-3-3"
         stroke="currentColor"
@@ -38,34 +36,23 @@ export default function Dashboard() {
 
   const [query, setQuery] = useState('')
   const [kategori, setKategori] = useState('')
-  const [filterOpen, setFilterOpen] =
-    useState(false)
+  const [filterOpen, setFilterOpen] = useState(false)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
 
     return reports.filter((r) => {
-      if (
-        kategori &&
-        r.kategori !== kategori
-      )
+      if (kategori && r.kategori !== kategori) {
         return false
+      }
 
       if (!q) return true
 
       return (
-        r.judul
-          .toLowerCase()
-          .includes(q) ||
-        r.alamat
-          .toLowerCase()
-          .includes(q) ||
-        r.pelapor
-          .toLowerCase()
-          .includes(q) ||
-        r.kategori
-          .toLowerCase()
-          .includes(q)
+        r.judul.toLowerCase().includes(q) ||
+        r.alamat.toLowerCase().includes(q) ||
+        r.pelapor.toLowerCase().includes(q) ||
+        r.kategori.toLowerCase().includes(q)
       )
     })
   }, [reports, query, kategori])
@@ -80,11 +67,8 @@ export default function Dashboard() {
       Status: r.status,
     }))
 
-    const worksheet =
-      XLSX.utils.json_to_sheet(data)
-
-    const workbook =
-      XLSX.utils.book_new()
+    const worksheet = XLSX.utils.json_to_sheet(data)
+    const workbook = XLSX.utils.book_new()
 
     XLSX.utils.book_append_sheet(
       workbook,
@@ -109,7 +93,6 @@ export default function Dashboard() {
           <p className="dashboard__stat-label">
             Total Laporan
           </p>
-
           <p className="dashboard__stat-value">
             {stats.total}
           </p>
@@ -119,9 +102,10 @@ export default function Dashboard() {
           <p className="dashboard__stat-label">
             Belum diterima
           </p>
-
           <p className="dashboard__stat-value">
-            {stats.diproses}
+            {stats.belumDiterima ??
+              stats.belum_diterima ??
+              0}
           </p>
         </article>
 
@@ -129,7 +113,6 @@ export default function Dashboard() {
           <p className="dashboard__stat-label">
             Diproses
           </p>
-
           <p className="dashboard__stat-value">
             {stats.diproses}
           </p>
@@ -139,7 +122,6 @@ export default function Dashboard() {
           <p className="dashboard__stat-label">
             Selesai
           </p>
-
           <p className="dashboard__stat-value">
             {stats.selesai}
           </p>
@@ -149,122 +131,121 @@ export default function Dashboard() {
           <p className="dashboard__stat-label">
             Ditolak
           </p>
-
           <p className="dashboard__stat-value">
             {stats.ditolak}
           </p>
         </article>
       </section>
 
-      {/* TITLE */}
-      <div className="dashboard__section-title">
-        Data Laporan
-      </div>
-
-      {/* TOOLBAR */}
-      <div className="dashboard__toolbar">
-        <label className="dashboard__search">
-          <span className="visually-hidden">
-            Cari laporan
-          </span>
-
-          <span
-            className="dashboard__search-icon"
-            aria-hidden
-          >
-            <IconSearch />
-          </span>
-
-          <input
-            type="search"
-            className="aduin-input dashboard__search-input"
-            placeholder="Cari judul, alamat, pelapor, atau kategori…"
-            value={query}
-            onChange={(e) =>
-              setQuery(e.target.value)
-            }
-            autoComplete="off"
-          />
-        </label>
-
-        {/* FILTER */}
-        <button
-          type="button"
-          className="aduin-btn aduin-btn--primary dashboard__filter-btn"
-          onClick={() =>
-            setFilterOpen((v) => !v)
-          }
-          aria-expanded={filterOpen}
-        >
-          Filter
-        </button>
-
-        {/* DOWNLOAD */}
-        <button
-          type="button"
-          className="aduin-btn aduin-btn--primary dashboard__filter-btn"
-          onClick={handleDownloadExcel}
-        >
-          Unduh File
-        </button>
-      </div>
-
-      {/* FILTER PANEL */}
-      {filterOpen ? (
-        <div
-          className="dashboard__filter-panel"
-          role="region"
-          aria-label="Filter kategori"
-        >
-          <label className="dashboard__filter-field">
-            <span>Kategori</span>
-
-            <select
-              className="aduin-input dashboard__select"
-              value={kategori}
-              onChange={(e) =>
-                setKategori(
-                  e.target.value
-                )
-              }
-            >
-              <option value="">
-                Semua kategori
-              </option>
-
-              {REPORT_CATEGORIES.map(
-                (c) => (
-                  <option
-                    key={c}
-                    value={c}
-                  >
-                    {c}
-                  </option>
-                )
-              )}
-            </select>
-          </label>
-
-          {kategori ? (
-            <button
-              type="button"
-              className="aduin-link dashboard__filter-clear"
-              onClick={() =>
-                setKategori('')
-              }
-            >
-              Hapus filter kategori
-            </button>
-          ) : null}
-        </div>
-      ) : null}
-
-      {/* TABLE */}
+      {/* TABLE WRAPPER + HEADER DI DALAM KOTAK */}
       <div
-        className="dashboard__table-wrap"
         role="region"
         aria-label="Daftar laporan"
       >
+        {/* HEADER DI DALAM KOTAK TABLE */}
+      
+        <div className="dashboard__table-header">
+          {/* KIRI */}
+          <div className="dashboard__header-left">
+            <h2 className="dashboard__section-title">
+              Data Laporan
+            </h2>
+          </div>
+
+          {/* KANAN */}
+          <div className="dashboard__header-right">
+            {/* SEARCH */}
+            <label className="dashboard__search">
+              <span className="visually-hidden">
+                Cari laporan
+              </span>
+
+              <input
+                type="search"
+                className="aduin-input dashboard__search-input"
+                placeholder="Cari laporan..."
+                value={query}
+                onChange={(e) =>
+                  setQuery(e.target.value)
+                }
+                autoComplete="off"
+              />
+            </label>
+
+            {/* FILTER */}
+            <button
+              type="button"
+              className="dashboard__action-btn"
+              onClick={() =>
+                setFilterOpen((v) => !v)
+              }
+              aria-expanded={filterOpen}
+            >
+              Filter
+            </button>
+
+            {/* DOWNLOAD */}
+            <button
+              type="button"
+              className="dashboard__action-btn"
+              onClick={handleDownloadExcel}
+            >
+              Unduh File
+            </button>
+          </div>
+        </div>
+
+        {/* FILTER PANEL */}
+        {filterOpen ? (
+          <div
+            className="dashboard__filter-panel"
+            role="region"
+            aria-label="Filter kategori"
+          >
+            <label className="dashboard__filter-field">
+              <span>Kategori</span>
+
+              <select
+                className="aduin-input dashboard__select"
+                value={kategori}
+                onChange={(e) =>
+                  setKategori(
+                    e.target.value
+                  )
+                }
+              >
+                <option value="">
+                  Semua kategori
+                </option>
+
+                {REPORT_CATEGORIES.map(
+                  (c) => (
+                    <option
+                      key={c}
+                      value={c}
+                    >
+                      {c}
+                    </option>
+                  )
+                )}
+              </select>
+            </label>
+
+            {kategori ? (
+              <button
+                type="button"
+                className="aduin-link dashboard__filter-clear"
+                onClick={() =>
+                  setKategori('')
+                }
+              >
+                Hapus filter kategori
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+
+        {/* TABLE */}
         <table className="dashboard__table">
           <thead>
             <tr>
@@ -286,7 +267,6 @@ export default function Dashboard() {
                 Status
               </th>
 
-              {/* AKSI */}
               <th scope="col">
                 Keterangan
               </th>
@@ -314,7 +294,6 @@ export default function Dashboard() {
                     <span className="dashboard__cat-mobile">
                       {r.kategori}
                     </span>
-
                   </div>
                 </td>
 
@@ -362,16 +341,19 @@ export default function Dashboard() {
 function badgeKind(status) {
   switch (status) {
     case 'Belum diterima':
-      return 'new'       
+      return 'new'
 
     case 'Diterima':
-      return 'accepted'   
+      return 'accepted'
 
     case 'Diproses':
-      return 'progress'   
+      return 'progress'
 
     case 'Selesai':
-      return 'done'       
+      return 'done'
+
+    case 'Ditolak':
+      return 'bad'
 
     default:
       return 'new'

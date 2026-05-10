@@ -74,7 +74,7 @@ export default function ReportDetail() {
             <dt>Kategori</dt>
             <dd>{report.kategori}</dd>
           </div>
-          <div className="report-detail__row report-detail__row--block">
+          <div className="report-detail__row">
             <dt>Deskripsi</dt>
             <dd>{report.deskripsi}</dd>
           </div>

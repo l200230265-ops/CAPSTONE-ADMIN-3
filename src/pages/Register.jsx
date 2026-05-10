@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Logo } from '../components/Logo.jsx'
 import '../App.css'
+import logo from '../assets/logo.png'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -18,10 +19,18 @@ export default function Register() {
   return (
     <div className="register-page">
       <header className="register-page__header">
-        <Logo size="medium" />
+        {/* Logo gambar */}
+        <img
+          src={logo}
+          alt="Logo ADUIN"
+          className="register-page__logo"
+        />
+
+        {/* Tulisan ADUIN */}
+        <Logo size="large" />
       </header>
+
       <main className="register-page__main">
-        <h1 className="register-page__title">Sign Up Admin</h1>
         <form className="register-page__form" onSubmit={handleSubmit} noValidate>
           <label className="aduin-field">
             <span className="visually-hidden">Username</span>
@@ -34,6 +43,7 @@ export default function Register() {
               onChange={(e) => setUsername(e.target.value)}
             />
           </label>
+
           <label className="aduin-field">
             <span className="visually-hidden">Email</span>
             <input
@@ -46,6 +56,7 @@ export default function Register() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </label>
+
           <label className="aduin-field">
             <span className="visually-hidden">Password</span>
             <input
@@ -58,6 +69,7 @@ export default function Register() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
+
           <label className="aduin-field">
             <span className="visually-hidden">Ulang password</span>
             <input
@@ -70,10 +82,15 @@ export default function Register() {
               onChange={(e) => setPassword2(e.target.value)}
             />
           </label>
-          <button type="submit" className="aduin-btn aduin-btn--primary register-page__submit">
+
+          <button
+            type="submit"
+            className="aduin-btn aduin-btn--primary register-page__submit"
+          >
             Sign up
           </button>
         </form>
+
         <p className="register-page__login">
           Sudah punya akun?{' '}
           <Link to="/login" className="aduin-link aduin-link--inline">
